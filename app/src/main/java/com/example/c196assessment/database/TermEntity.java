@@ -18,6 +18,7 @@ public class TermEntity {
     public TermEntity() {
     }
 
+    @Ignore
     public TermEntity(int id, String termTitle, Date startDate, Date endDate) {
         this.id = id;
         this.termTitle = termTitle;
@@ -25,7 +26,6 @@ public class TermEntity {
         this.endDate = endDate;
     }
 
-    @Ignore
     public TermEntity(String termTitle, Date startDate, Date endDate) {
         this.termTitle = termTitle;
         this.startDate = startDate;

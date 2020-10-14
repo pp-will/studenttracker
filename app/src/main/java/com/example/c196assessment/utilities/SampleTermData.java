@@ -18,8 +18,8 @@ public class SampleTermData {
 
     public static List<TermEntity> getTerms() {
         List<TermEntity> terms = new ArrayList<>();
-        terms.add(new TermEntity(1, "Spring 2021", getDate(1), getDate(6)));
-        terms.add(new TermEntity(2, "Winter 2021", getDate(7), getDate(13)));
+        terms.add(new TermEntity("Spring 2021", getDate(1), getDate(6)));
+        terms.add(new TermEntity("Winter 2021", getDate(7), getDate(13)));
         return terms;
     }
 }

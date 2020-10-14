@@ -1,9 +1,11 @@
 package com.example.c196assessment;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.example.c196assessment.database.TermEntity;
 import com.example.c196assessment.ui.TermsAdapter;
+import com.example.c196assessment.utilities.AlertUtils;
 import com.example.c196assessment.viewmodel.TermViewModel;
 import androidx.lifecycle.Observer;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,8 +15,10 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,26 +26,30 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Optional;
 
 public class TermActivity extends AppCompatActivity {
 
     @BindView(R.id.term_recycler_view)
     RecyclerView mRecyclerView;
 
-    @OnClick(R.id.fab)
+    @OnClick(R.id.createFab)
     void fabClickHandler() {
-        // TODO
+        Intent intent = new Intent(this, CreateTerm.class);
+        startActivity(intent);
     }
 
     private List<TermEntity> termsData = new ArrayList<>();
     private TermsAdapter mAdapter;
     private TermViewModel mViewModel;
+    AlertUtils alertUtils;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_term);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setTitle("Terms");
         setSupportActionBar(toolbar);
 
         ButterKnife.bind(this);
@@ -103,6 +111,7 @@ public class TermActivity extends AppCompatActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
+        TextView errorText = findViewById(R.id.errorText);
 
         int id = item.getItemId();
 
@@ -110,7 +119,11 @@ public class TermActivity extends AppCompatActivity {
             addSampleData();
             return true;
         } else if (id == R.id.action_delete_all) {
-            deleteAllTerms();
+            if(termsData.size() > 0) {
+                errorText.setText("Terms may not be deleted if courses are assigned to it");
+            } else {
+                deleteAllTerms();
+            }
             return true;
         }
 
