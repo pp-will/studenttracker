@@ -1,6 +1,7 @@
 package com.example.c196assessment.ui;
 
 import android.content.Context;
+import android.content.Intent;
 import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.c196assessment.R;
+import com.example.c196assessment.TermCourses;
 import com.example.c196assessment.database.DateConverter;
 import com.example.c196assessment.database.TermEntity;
 import com.example.c196assessment.utilities.DateUtils;
@@ -21,6 +23,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static com.example.c196assessment.utilities.Constants.TERM_ID_KEY;
 
 public class TermsAdapter extends RecyclerView.Adapter<TermsAdapter.ViewHolder> {
 
@@ -53,7 +57,9 @@ public class TermsAdapter extends RecyclerView.Adapter<TermsAdapter.ViewHolder> 
 
             @Override
             public void onClick(View v) {
-                //TODO INent switch to course view
+                Intent intent = new Intent(mContext, TermCourses.class);
+                intent.putExtra(TERM_ID_KEY, term.getId());
+                mContext.startActivity(intent);
             }
         });
     }
@@ -68,6 +74,7 @@ public class TermsAdapter extends RecyclerView.Adapter<TermsAdapter.ViewHolder> 
         TextView termTitle;
         @BindView(R.id.term_dates)
         TextView termDates;
+        @BindView(R.id.viewFab)
         FloatingActionButton mFab;
 
         public ViewHolder(@NonNull View termView) {
