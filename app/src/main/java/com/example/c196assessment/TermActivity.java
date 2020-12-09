@@ -120,7 +120,7 @@ public class TermActivity extends AppCompatActivity {
             return true;
         } else if (id == R.id.action_delete_all) {
             if(termsData.size() > 0) {
-                errorText.setText("Terms may not be deleted if courses are assigned to it");
+                errorText.setText(R.string.terms_error);
             } else {
                 deleteAllTerms();
             }
