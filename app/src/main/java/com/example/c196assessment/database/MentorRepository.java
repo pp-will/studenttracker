@@ -26,7 +26,12 @@ public class MentorRepository {
 
     private MentorRepository(Context context) {
         mDb = AppDatabase.getInstance(context);
+        mMentors = getAllMentors();
         // mMentors = getAllTerms();
+    }
+
+    private LiveData<List<MentorEntity>> getAllMentors() {
+        return mDb.mentorDao().getAllMentors();
     }
 
     public long insertMentor(MentorEntity mentor) {

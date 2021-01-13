@@ -5,7 +5,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 
 import com.example.c196assessment.AddCourseActivity;
+import com.example.c196assessment.database.AlertEntity;
+import com.example.c196assessment.database.AppDatabase;
 
+import java.util.Date;
 import java.util.HashMap;
 
 import static android.app.PendingIntent.getActivity;
@@ -39,25 +42,12 @@ public class AlertUtils {
         alert11.show();
     }
 
-    /* public void errorDialog(HashMap<String, String> input) {
-        AlertDialog.Builder builder = new AlertDialog.Builder();
-        String message = "";
-        for(HashMap.Entry<String, String> entry : input.entrySet()) {
-            if(entry.getValue() != "OK") {
-                message += entry.getValue() + "\n";
-            }
-        }
-        builder.setMessage(message);
+    public void setAlert(int courseId, String message, Date startDate, Date endDate) {
+        AlertEntity alert = new AlertEntity();
+        alert.setCourseId(courseId);
+        alert.setMessage(message);
+        alert.setStartDate(startDate);
+        alert.setEndDate(endDate);
 
-        builder.setPositiveButton(
-                "OK",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                });
-
-        AlertDialog alert = builder.create();
-        alert.show();
-    } */
+    }
 }

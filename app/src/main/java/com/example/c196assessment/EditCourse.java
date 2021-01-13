@@ -1,7 +1,9 @@
 package com.example.c196assessment;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -10,12 +12,18 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.c196assessment.database.AppDatabase;
+import com.example.c196assessment.database.CourseAlertEntity;
 import com.example.c196assessment.database.CourseEntity;
 import com.example.c196assessment.utilities.AlertUtils;
 import com.example.c196assessment.utilities.CreateDatePicker;
@@ -26,6 +34,7 @@ import com.example.c196assessment.viewmodel.CourseViewModel;
 import com.example.c196assessment.viewmodel.MentorViewModel;
 import com.example.c196assessment.viewmodel.ViewModelFactory;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -49,7 +58,9 @@ public class EditCourse extends AppCompatActivity implements AdapterView.OnItemS
     AlertUtils alertUtils = new AlertUtils();
     private MentorViewModel mentorViewModel;
     private CourseViewModel courseViewModel;
-    private int instructorId;
+    CourseEntity course;
+    //private int instructorId;
+    AppDatabase mDb;
 
     @BindView(R.id.startMonthSpinner)
     Spinner startMonthSpinner;
@@ -84,11 +95,14 @@ public class EditCourse extends AppCompatActivity implements AdapterView.OnItemS
     List<Integer> mEndYears = new ArrayList<>();
     List<String> mStatus = new ArrayList<>();
 
+    //Bundle extras = getIntent().getExtras();
+
     private boolean mEditing;
 
     @OnClick(R.id.submitBtn)
     void submitBtnClickHandler() {
         Bundle extras = getIntent().getExtras();
+        mDb = AppDatabase.getInstance(getApplicationContext());
         int termId = extras.getInt(TERM_ID_KEY);
         int courseId = extras.getInt(COURSE_ID_KEY);
 
@@ -130,41 +144,40 @@ public class EditCourse extends AppCompatActivity implements AdapterView.OnItemS
             errorDialog(validationResult);
         } else {
             try {
-                Log.println(Log.INFO, "TAG", "instructorId = " + instructorId);
-                long id = mentorViewModel.updateMentor(instructorId, instructorName, instructorEmail, instructorPhone);
-                Log.println(Log.INFO, "TAG", "update mentor id = " + id);
-                mentorId = (int) id;
+                Log.println(Log.INFO, "TAG", "update termId = " + termId);
+                Log.println(Log.INFO, "TAG", "update courseId = " + courseId);
+                //courseViewModel.updateCourse(courseId, termId, course, startDate, endDate, status, instructorName, instructorEmail, instructorPhone);
+                //update course, return id
+                CourseEntity courseEntity = new CourseEntity(courseId, termId, course, startDate, endDate, status, instructorName, instructorEmail, instructorPhone);
+                mDb.courseDao().newUpdateCourse(courseEntity);
+                //int newCourseId = (int) returnedCourseId;
+                CourseEntity newCourseEntity = mDb.courseDao().getCourseDetails(courseId);
+                String message = newCourseEntity.getCourseName();
+                startDate = newCourseEntity.getStartDate();
+                endDate = newCourseEntity.getEndDate();
+                mDb.courseAlertDao().updateAlert(courseId, message, startDate, endDate);
+                //end alert
             } catch (NullPointerException e) {
                 e.printStackTrace();
             }
 
-           /* finally {
-                Intent intent = new Intent(this, TermCourses.class);
-                intent.putExtra(TERM_ID_KEY, termId);
-                startActivity(intent);
-            } */
-        }
-
-        if(mentorId == 0) {
-            errorDialog(validationResult);
-        } else {
-            try {
-                Log.println(Log.INFO, "TAG", "SENDING TERM ID = " + termId);
-                courseViewModel.updateCourse(courseId, termId, course, startDate, endDate, status, mentorId);
-            } catch (NullPointerException e) {
-                e.printStackTrace();
-            } finally {
+            finally {
                 Intent intent = new Intent(this, TermCourses.class);
                 intent.putExtra(TERM_ID_KEY, termId);
                 startActivity(intent);
             }
         }
+
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_course);
+        //Toolbar toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //setSupportActionBar(toolbar);
 
         ButterKnife.bind(this);
         Bundle extras = getIntent().getExtras();
@@ -247,6 +260,9 @@ public class EditCourse extends AppCompatActivity implements AdapterView.OnItemS
                 calendarStart.setTime(startDate1);
                 calendarEnd.setTime(endDate1);
 
+                Log.println(Log.INFO, "TAG", "update INIT termId = " + courseEntity.getTermId());
+                extras.putInt(TERM_ID_KEY, courseEntity.getTermId());
+
                 int startMonth = calendarStart.get(Calendar.MONTH);
                 int startYear = calendarStart.get(Calendar.YEAR);
                 int endMonth = calendarEnd.get(Calendar.MONTH);
@@ -291,7 +307,7 @@ public class EditCourse extends AppCompatActivity implements AdapterView.OnItemS
                 mentorEmail.setText(courseEntity.getEmail());
                 mentorPhone.setText(courseEntity.getPhone());
 
-                instructorId = courseEntity.getMentorId();
+               // instructorId = courseEntity.getMentorId();
             }
         }));
 
@@ -301,6 +317,69 @@ public class EditCourse extends AppCompatActivity implements AdapterView.OnItemS
         }
 
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_course_edit, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        TextView errorText = findViewById(R.id.errorText);
+
+        int id = item.getItemId();
+
+        if(id == R.id.action_notes) {
+            int courseId = courseViewModel.mLiveCourse.getValue().getId();
+            Log.println(Log.INFO, "TAG", "course id from EDITCOURSE= " + courseId);
+            Intent intent = new Intent(this, NotesActivity.class);
+            intent.putExtra(COURSE_ID_KEY, courseId);
+            startActivity(intent);
+        } else if (id == R.id.action_assessments) {
+            int courseId = courseViewModel.mLiveCourse.getValue().getId();
+            Intent intent = new Intent(this, AssessmentActivity.class);
+            intent.putExtra(COURSE_ID_KEY, courseId);
+            startActivity(intent);
+
+        } else if (id == R.id.action_delete) {
+
+            try {
+                courseViewModel = new ViewModelProvider(this).get(CourseViewModel.class);
+                int termId = courseViewModel.mLiveCourse.getValue().getTermId();
+                Intent intent = new Intent(this, TermCourses.class);
+                intent.putExtra(TERM_ID_KEY, termId);
+                deleteCourse();
+                startActivity(intent);
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+            }
+
+            finally {
+                Toast.makeText(getApplicationContext(),"Successfully deleted!",Toast.LENGTH_SHORT).show();
+            }
+
+            return true;
+        } else if (id == android.R.id.home) {
+            int termId = courseViewModel.mLiveCourse.getValue().getTermId();
+            Intent intent = new Intent(this, TermCourses.class);
+            intent.putExtra(TERM_ID_KEY, termId);
+            startActivity(intent);
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void deleteCourse() {
+
+        courseViewModel.deleteCourse();
+    }
+
+    private void addSampleData() {
     }
 
     public void errorDialog(HashMap<String, String> input) {
@@ -323,6 +402,12 @@ public class EditCourse extends AppCompatActivity implements AdapterView.OnItemS
 
         AlertDialog alert = builder.create();
         alert.show();
+    }
+
+    public void setAlert(int courseId, String message, Date startDate, Date endDate) {
+        CourseAlertEntity newAlert;
+        long id;
+        mDb.courseAlertDao().updateAlert(courseId, message, startDate, endDate);
     }
 
 }

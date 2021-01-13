@@ -16,7 +16,7 @@ public interface TermDao {
     void insertTerm(TermEntity termEntity);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertAll(List<TermEntity> terms);
+    long[] insertAll(List<TermEntity> terms);
 
     @Delete
     void deleteTerm(TermEntity termEntity);
@@ -24,7 +24,7 @@ public interface TermDao {
     @Query("SELECT * FROM terms WHERE id = :id")
     TermEntity getTermById(int id);
 
-    @Query("SELECT * FROM terms ORDER BY startDate DESC")
+    @Query("SELECT * FROM terms ORDER BY startDate ASC")
     LiveData<List<TermEntity>> getAll();
 
     @Query("DELETE FROM terms")
@@ -32,4 +32,7 @@ public interface TermDao {
 
     @Query("SELECT COUNT(*) FROM terms")
     int getCount();
+
+    @Query("DELETE FROM terms")
+    void wipeDb();
 }

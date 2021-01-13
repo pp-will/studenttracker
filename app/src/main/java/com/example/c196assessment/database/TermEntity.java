@@ -1,5 +1,6 @@
 package com.example.c196assessment.database;
 
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
@@ -10,8 +11,11 @@ import java.util.Date;
 public class TermEntity {
     @PrimaryKey(autoGenerate = true)
     private int id;
+    @ColumnInfo(name = "termTitle")
     private String termTitle;
+    @ColumnInfo(name = "startDate")
     private Date startDate;
+    @ColumnInfo(name = "endDate")
     private Date endDate;
 
     @Ignore

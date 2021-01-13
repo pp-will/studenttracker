@@ -18,7 +18,9 @@ public class ViewModelFactory extends ViewModelProvider.NewInstanceFactory {
     public <T extends ViewModel> T create(Class<T> modelClass) {
         if (modelClass == CourseViewModel.class) {
             return (T) new CourseViewModel(mApplication, (int) mParams[0]);
-        }  else {
+        }  else if (modelClass == NoteViewModel.class) {
+            return (T) new NoteViewModel(mApplication, (int) mParams[0]);
+        } else {
             return super.create(modelClass);
         }
     }

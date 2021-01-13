@@ -9,7 +9,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".EditCourse"></activity>
+        <activity android:name=".ProgressActivity"></activity>
+        <activity android:name=".AssessmentEditActivity" />
+        <activity android:name=".AssessmentActivity" />
+        <activity android:name=".EmailActivity" />
+        <activity android:name=".NoteEditActivity" />
+        <activity android:name=".NotesActivity" />
+        <activity android:name=".EditCourse" />
         <activity android:name=".AddCourseActivity" />
         <activity android:name=".TermCourses" />
         <activity android:name=".CreateTerm" />
@@ -24,6 +30,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <receiver android:name="com.example.c196assessment.utilities.AlertReminder" />
     </application>
 
 </manifest>

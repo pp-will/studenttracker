@@ -37,8 +37,22 @@ public class TermViewModel extends AndroidViewModel {
         mRepository.insertTerm(term);
     }
 
+    public void loadData(int termId) {
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                TermEntity term = mRepository.getTermById(termId);
+                mLiveTerm.postValue(term);
+            }
+        });
+    }
+
 
     public void deleteAllTerms() {
         mRepository.deleteAllTerms();
+    }
+
+    public void deleteTerm() {
+        mRepository.deleteTerm(mLiveTerm.getValue());
     }
 }

@@ -1,5 +1,6 @@
 package com.example.c196assessment.database;
 
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.Ignore;
@@ -7,24 +8,33 @@ import androidx.room.PrimaryKey;
 
 import java.util.Date;
 
+import static androidx.room.ForeignKey.CASCADE;
+
 //@Entity(tableName = "course")
 @Entity(tableName = "course",
-        foreignKeys = @ForeignKey(entity = MentorEntity.class,
+        foreignKeys = @ForeignKey(entity = TermEntity.class,
         parentColumns = "id",
-        childColumns = "mentorId",
-        onDelete = ForeignKey.NO_ACTION
+        childColumns = "termId",
+        onDelete = CASCADE
 ))
 public class CourseEntity {
     @PrimaryKey(autoGenerate = true)
     private int id;
+    @ColumnInfo(name = "termId")
     private int termId;
+    @ColumnInfo(name = "courseName")
     private String courseName;
+    @ColumnInfo(name = "startDate")
     private Date startDate;
+    @ColumnInfo(name = "endDate")
     private Date endDate;
+    @ColumnInfo(name = "status")
     private String status;
-    private int mentorId;
+    @ColumnInfo(name = "name")
     private String name;
+    @ColumnInfo(name = "email")
     private String email;
+    @ColumnInfo(name = "phone")
     private String phone;
 
     @Ignore
@@ -32,33 +42,24 @@ public class CourseEntity {
     }
 
     @Ignore
-    public CourseEntity(int id, int termId, String courseName, Date startDate, Date endDate, String status, int mentorId) {
+    public CourseEntity(int id, int termId, String courseName, Date startDate, Date endDate, String status, String name, String email, String phone) {
         this.id = id;
         this.termId = termId;
         this.courseName = courseName;
         this.startDate = startDate;
         this.endDate = endDate;
         this.status = status;
-        this.mentorId = mentorId;
+        this.name = name;
+        this.email = email;
+        this.phone = phone;
     }
 
-    public CourseEntity(int termId, String courseName, Date startDate, Date endDate, String status, int mentorId) {
+    public CourseEntity(int termId, String courseName, Date startDate, Date endDate, String status, String name, String email, String phone) {
         this.termId = termId;
         this.courseName = courseName;
         this.startDate = startDate;
         this.endDate = endDate;
         this.status = status;
-        this.mentorId = mentorId;
-    }
-
-    @Ignore
-    public CourseEntity(int termId, String courseName, Date startDate, Date endDate, String status, int mentorId, String name, String email, String phone) {
-        this.termId = termId;
-        this.courseName = courseName;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.status = status;
-        this.mentorId = mentorId;
         this.name = name;
         this.email = email;
         this.phone = phone;
@@ -136,14 +137,6 @@ public class CourseEntity {
         this.status = status;
     }
 
-    public int getMentorId() {
-        return mentorId;
-    }
-
-    public void setMentorId(int mentorId) {
-        this.mentorId = mentorId;
-    }
-
     @Override
     public String toString() {
         return "CourseEntity{" +
@@ -153,7 +146,9 @@ public class CourseEntity {
                 ", startDate=" + startDate +
                 ", endDate=" + endDate +
                 ", status='" + status + '\'' +
-                ", mentorId=" + mentorId +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", phone='" + phone + '\'' +
                 '}';
     }
 }

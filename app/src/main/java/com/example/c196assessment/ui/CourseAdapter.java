@@ -24,6 +24,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static com.example.c196assessment.utilities.Constants.COURSE_ID_KEY;
+import static com.example.c196assessment.utilities.Constants.TERM_ID_KEY;
 
 public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.ViewHolder> {
 
@@ -55,6 +56,7 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.ViewHolder
             public void onClick(View v) {
                 Intent intent = new Intent(mContext, EditCourse.class);
                 intent.putExtra(COURSE_ID_KEY, course.getId());
+                intent.putExtra(TERM_ID_KEY, course.getTermId());
                 mContext.startActivity(intent);
             }
         });

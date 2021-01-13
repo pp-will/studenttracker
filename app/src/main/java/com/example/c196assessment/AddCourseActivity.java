@@ -16,6 +16,10 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 
+import com.example.c196assessment.database.AppDatabase;
+import com.example.c196assessment.database.CourseAlertEntity;
+import com.example.c196assessment.database.CourseEntity;
+import com.example.c196assessment.database.MentorEntity;
 import com.example.c196assessment.utilities.AlertUtils;
 import com.example.c196assessment.utilities.CreateDatePicker;
 import com.example.c196assessment.utilities.DateUtils;
@@ -52,6 +56,8 @@ public class AddCourseActivity extends AppCompatActivity implements AdapterView.
     private MentorViewModel mentorViewModel;
     private CourseViewModel courseViewModel;
     Executor executor = Executors.newSingleThreadExecutor();
+    AppDatabase mDb;
+    Long courseId;
 
     @BindView(R.id.startMonthSpinner)
     Spinner startMonthSpinner;
@@ -91,6 +97,7 @@ public class AddCourseActivity extends AppCompatActivity implements AdapterView.
     @OnClick(R.id.submitBtn)
     void submitBtnClickHandler() {
         Bundle extras = getIntent().getExtras();
+        mDb = AppDatabase.getInstance(getApplicationContext());
         int termId = extras.getInt(TERM_ID_KEY);
 
         int startYear = (int) startYearSpinner.getSelectedItem();
@@ -126,55 +133,33 @@ public class AddCourseActivity extends AppCompatActivity implements AdapterView.
             }
         }
 
-        Log.println(Log.INFO, "TAG", valid.toString());
-
-        /*
-
-       public long insertUploadStatus(User user) {
-    Callable<Long> insertCallable = () -> userDao.insert(user);
-    long rowId = 0;
-
-    Future<Long> future = executorService.submit(insertCallable);
-     try {
-         rowId = future.get();
-    } catch (InterruptedException e1) {
-        e1.printStackTrace();
-    } catch (ExecutionException e) {
-        e.printStackTrace();
-    }
-    return rowId;
- }
-         */
-
         if(!valid) {
             Log.println(Log.INFO, "TAG", "INVALID::::");
             errorDialog(validationResult);
         } else {
             Log.println(Log.INFO, "TAG", "VALID::::");
             try {
-                //long id = mentorViewModel.saveMentor(instructorName, instructorEmail, instructorPhone);
-
-                //Log.println(Log.INFO, "TAG", "SENDING TERM ID = " + termId);
-                //int mentorId = (int) id;
-              //  Log.println(Log.INFO, "TAG", "CASTED MENTOR ID = "  + mentorId);
-                Callable<Long> mentorCallable = () -> mentorViewModel.saveMentor(instructorName, instructorEmail, instructorPhone);
-
-                try {
-                  long mentorId = mentorCallable.call();
-                    Log.println(Log.INFO, "TAG", "FROM Callable: " + mentorId);
-                } catch (Exception e) {
-                    e.printStackTrace();;
-                }
-               // courseViewModel.saveCourse(termId, course, startDate, endDate, status, mentorId);
+               //courseViewModel.saveCourse(termId, course, startDate, endDate, status, instructorName, instructorEmail, instructorPhone);
+                CourseEntity courseEntity = new CourseEntity(termId, course, startDate, endDate, status, instructorName, instructorEmail, instructorPhone);
+                long courseId = mDb.courseDao().addCourse(courseEntity);
+                //alert
+                int newCourseId = (int) courseId;
+                CourseEntity newCourseEntity = mDb.courseDao().getCourseDetails(newCourseId);
+                String message = newCourseEntity.getCourseName();
+                startDate = newCourseEntity.getStartDate();
+                endDate = newCourseEntity.getEndDate();
+                CourseAlertEntity alert = setAlert(newCourseId, message, startDate, endDate);
+                //end alert
             } catch (NullPointerException e) {
                 e.printStackTrace();
             }
 
-          /*  finally {
+           finally {
+
                 Intent intent = new Intent(this, TermCourses.class);
                 intent.putExtra(TERM_ID_KEY, termId);
                 startActivity(intent);
-            } */
+            }
         }
     }
 
@@ -237,6 +222,7 @@ public class AddCourseActivity extends AppCompatActivity implements AdapterView.
         int termId = extras.getInt(TERM_ID_KEY);
         mentorViewModel = new ViewModelProvider(this).get(MentorViewModel.class);
         courseViewModel = ViewModelProviders.of(this, new ViewModelFactory(getApplication(), termId)).get(CourseViewModel.class);
+
     }
 
     @Override
@@ -277,6 +263,16 @@ public class AddCourseActivity extends AppCompatActivity implements AdapterView.
     protected void onSaveInstanceState(Bundle outState) {
         outState.putBoolean(EDITING_KEY, true);
         super.onSaveInstanceState(outState);
+    }
+
+    public CourseAlertEntity setAlert(int courseId, String message, Date startDate, Date endDate) {
+        CourseAlertEntity alert = new CourseAlertEntity(courseId, message, startDate, endDate);
+        CourseAlertEntity newAlert;
+        long id;
+        id = mDb.courseAlertDao().insertAlert(alert);
+        int alertId = (int) id;
+        newAlert = mDb.courseAlertDao().getAlert(alertId);
+        return newAlert;
     }
 
     @Override

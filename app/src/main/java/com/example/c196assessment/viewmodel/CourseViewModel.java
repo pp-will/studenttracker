@@ -20,6 +20,7 @@ public class CourseViewModel extends AndroidViewModel {
     public LiveData<List<CourseEntity>> mCourses;
     public LiveData<List<CourseEntity>> mTermCourses;
     public MutableLiveData<CourseEntity> mLiveCourse = new MutableLiveData<>();
+    public LiveData<List<CourseEntity>> mAllCourses;
     CourseEntity course;
     private CourseRepository mRepository;
     private Executor executor = Executors.newSingleThreadExecutor();
@@ -27,23 +28,40 @@ public class CourseViewModel extends AndroidViewModel {
     public CourseViewModel(@NonNull Application application, int termId) {
         super(application);
         mRepository = CourseRepository.getInstance(getApplication());
-        //mCourses = mRepository.mCourses;
+        mCourses = mRepository.mCourses;
         mTermCourses = getCourses(termId);
+        //mAllCourses = mRepository.mAllCourses;
         //course = getCourseDetails(termId);
     }
 
-    public void saveCourse(int termId, String courseName, Date startDate, Date endDate, String status, int mentorId) {
-        CourseEntity course = new CourseEntity(termId, courseName, startDate, endDate, status, mentorId);
-        mRepository.insertCourse(course);
+    public CourseViewModel(@NonNull Application application) {
+        super(application);
+        mRepository = CourseRepository.getInstance(getApplication());
+        mCourses = mRepository.mCourses;
+        mAllCourses = mRepository.mAllCourses;
     }
 
-    public void updateCourse(int courseId, int termId, String courseName, Date startDate, Date endDate, String status, int mentorId) {
-        CourseEntity course = new CourseEntity(courseId, termId, courseName, startDate, endDate, status, mentorId);
+    public void saveCourse(int termId, String courseName, Date startDate, Date endDate, String status, String name, String email, String phone) {
+        CourseEntity course = new CourseEntity(termId, courseName, startDate, endDate, status, name, email, phone);
         mRepository.insertCourse(course);
+
+    }
+
+    public void updateCourse(int courseId, int termId, String courseName, Date startDate, Date endDate, String status, String name, String email, String phone) {
+        CourseEntity course = new CourseEntity(courseId, termId, courseName, startDate, endDate, status, name, email, phone);
+        mRepository.updateCourse(course);
     }
 
     public LiveData<List<CourseEntity>> getCourses(int termId) {
        return mRepository.getCoursesForTerm(termId);
+    }
+
+    public LiveData<List<CourseEntity>> getAllCourses() {
+        return mRepository.getAllLiveCourses();
+    }
+
+    public void deleteCourse() {
+        mRepository.deleteCourse(mLiveCourse.getValue());
     }
 
     public CourseEntity getCourseDetails(int courseId) {
@@ -59,5 +77,4 @@ public class CourseViewModel extends AndroidViewModel {
             }
         });
     }
-
 }
