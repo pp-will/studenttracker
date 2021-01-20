@@ -9,6 +9,8 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
+import com.example.c196assessment.database.reportEntities.CourseReportEntity;
+import com.example.c196assessment.database.reportEntities.MentorReportEntity;
 import com.example.c196assessment.utilities.CourseData;
 
 import java.util.List;
@@ -28,10 +30,10 @@ public interface CourseDao {
     @Query("SELECT * FROM course")
     LiveData<List<CourseEntity>> getAllCourses();
 
-    @Query("SELECT c.id, c.termId, c.courseName, c.startDate, c.endDate, c.status, c.name, c.email, c.phone FROM course AS c WHERE c.termId = :termId")
+    @Query("SELECT c.id, c.termId, c.courseName, c.startDate, c.endDate, c.status, c.name, c.email, c.phone, c.alertSet FROM course AS c WHERE c.termId = :termId")
     LiveData<List<CourseEntity>> getCoursesForTerm(int termId);
 
-    @Query("SELECT c.id, c.termId, c.courseName, c.startDate, c.endDate, c.status, c.name, c.email, c.phone FROM course AS c WHERE c.id = :courseId")
+    @Query("SELECT c.id, c.termId, c.courseName, c.startDate, c.endDate, c.status, c.name, c.email, c.phone, c.alertSet FROM course AS c WHERE c.id = :courseId")
     CourseEntity getCourseDetails(int courseId);
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
@@ -54,4 +56,17 @@ public interface CourseDao {
 
     @Query("SELECT * FROM course")
     List<CourseEntity> getListOfCourses();
+
+    // Report Queries
+    @Query("SELECT name, email, phone FROM course WHERE name LIKE :name")
+    List<MentorReportEntity> getMentorReport(String name);
+
+    @Query("SELECT c.courseName, t.termTitle, c.name, c.status FROM course AS c JOIN terms AS t ON c.termId = t.id WHERE c.courseName LIKE :courseName")
+    List<CourseReportEntity> getCourseNameReport(String courseName);
+
+    @Query("SELECT c.courseName, t.termTitle, c.name, c.status FROM course AS c JOIN terms AS t ON c.termId = t.id WHERE t.termTitle LIKE :termName")
+    List<CourseReportEntity> getCourseTermReport(String termName);
+
+    @Query("Select c.courseName, t.termTitle, c.name, c.status, c.startDate, c.endDate FROM course AS c JOIN terms AS t ON c.termId = t.id")
+    List<CourseReportEntity> runCourseReport();
 }

@@ -29,10 +29,15 @@ public class SampleAssessmentAlertData {
 
     public static List<CourseAlertEntity> getCourseAlerts() {
         Date date = new Date();
+        Calendar calendar = Calendar.getInstance();
+        calendar.clear();
+        calendar.set(Calendar.MONTH, Calendar.JANUARY);
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        calendar.set(Calendar.YEAR, 2021);
+        Date twoStart = calendar.getTime();
         List<CourseAlertEntity> alerts = new ArrayList<>();
         alerts.add(new CourseAlertEntity(1, "Java 1", date, getDate(4)));
-        alerts.add(new CourseAlertEntity(2, "Data Management", getDate(1), getDate(3)));
-        alerts.add(new CourseAlertEntity(3, "Java 2", getDate(6), getDate(8)));
+        alerts.add(new CourseAlertEntity(2, "Data Management", twoStart, date));
         return alerts;
     }
 }

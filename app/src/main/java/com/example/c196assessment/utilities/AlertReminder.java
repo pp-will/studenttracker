@@ -4,6 +4,7 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -21,9 +22,9 @@ public class AlertReminder extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
     Calendar calDate = Calendar.getInstance();
-    Intent receiveIntent = new Intent(context, AssessmentEditActivity.class);
+    Intent receiveIntent = new Intent(context, MainActivity.class);
     PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, receiveIntent, 0);
-
+        Log.println(Log.INFO, "TAG", "onREceive() !!::");
     NotificationCompat.Builder thisBuilder = new NotificationCompat.Builder(context, "dgwChanId")
             .setSmallIcon(R.drawable.ic_course_icon)
             .setContentTitle("Assessment Due:")

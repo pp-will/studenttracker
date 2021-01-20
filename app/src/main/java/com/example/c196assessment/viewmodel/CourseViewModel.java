@@ -41,14 +41,14 @@ public class CourseViewModel extends AndroidViewModel {
         mAllCourses = mRepository.mAllCourses;
     }
 
-    public void saveCourse(int termId, String courseName, Date startDate, Date endDate, String status, String name, String email, String phone) {
-        CourseEntity course = new CourseEntity(termId, courseName, startDate, endDate, status, name, email, phone);
+    public void saveCourse(int termId, String courseName, Date startDate, Date endDate, String status, String name, String email, String phone, int alertSet) {
+        CourseEntity course = new CourseEntity(termId, courseName, startDate, endDate, status, name, email, phone, alertSet);
         mRepository.insertCourse(course);
 
     }
 
-    public void updateCourse(int courseId, int termId, String courseName, Date startDate, Date endDate, String status, String name, String email, String phone) {
-        CourseEntity course = new CourseEntity(courseId, termId, courseName, startDate, endDate, status, name, email, phone);
+    public void updateCourse(int courseId, int termId, String courseName, Date startDate, Date endDate, String status, String name, String email, String phone, int alertSet) {
+        CourseEntity course = new CourseEntity(courseId, termId, courseName, startDate, endDate, status, name, email, phone, alertSet);
         mRepository.updateCourse(course);
     }
 

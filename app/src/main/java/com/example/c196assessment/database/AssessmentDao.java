@@ -7,6 +7,7 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
+import com.example.c196assessment.database.reportEntities.AssessmentReportEntity;
 import com.example.c196assessment.utilities.AssessmentData;
 
 import java.util.List;
@@ -40,4 +41,11 @@ public interface AssessmentDao {
 
     @Query("SELECT * FROM assessments")
     List<AssessmentEntity> getAssessmentList();
+
+    //Reports
+    @Query("SELECT a.assessmentTitle, c.courseName, a.assessmentType, a.status FROM assessments AS a JOIN course AS c ON a.courseId = c.id WHERE a.assessmentTitle LIKE :assessmentTitle")
+    List<AssessmentReportEntity> getAssessmentNameReport(String assessmentTitle);
+
+    @Query("SELECT a.assessmentTitle, c.courseName, a.assessmentType, a.status FROM assessments AS a JOIN course AS c ON a.courseId = c.id WHERE a.assessmentType LIKE :assessmentType")
+    List<AssessmentReportEntity> getAssessmentTypeReport(String assessmentType);
 }

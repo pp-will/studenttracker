@@ -15,9 +15,10 @@ public class DateUtils {
         return output;
     }
 
-    public Date createDate(int month, int year) {
+    public Date createDate(int month, int day, int year) {
         calendar.clear();
         calendar.set(Calendar.MONTH, month);
+        calendar.set(Calendar.DAY_OF_MONTH, day);
         calendar.set(Calendar.YEAR, year);
         Date date = calendar.getTime();
         return date;

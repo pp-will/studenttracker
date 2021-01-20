@@ -58,7 +58,6 @@ public class AssessmentEditActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_assessment_edit);
-        notifyChannel();
 
         //notify test
         AlarmManager alarms = (AlarmManager)this.getSystemService(Context.ALARM_SERVICE);
@@ -221,6 +220,8 @@ public class AssessmentEditActivity extends AppCompatActivity {
                 } */
             }
         });
+
+        notifyChannel();
     }
 
     @Override
@@ -271,7 +272,13 @@ public class AssessmentEditActivity extends AppCompatActivity {
 
     public void createAlert(AssessmentAlertEntity alert) {
         Calendar calDateNow = Calendar.getInstance();
-        if(alert.getDate().getTime() < calDateNow.getTime().getTime()) {
+        Log.println(Log.INFO, "TAG", "ass date = " + alert.getDate().getTime());
+        Log.println(Log.INFO, "TAG", "current date = " + calDateNow.getTime().getTime());
+        Date alertDate = alert.getDate();
+        alertDate.setHours(23);
+        alertDate.setMinutes(59);
+        alertDate.setSeconds(59);
+        if(alertDate.getTime() > calDateNow.getTime().getTime()) {
             Intent outIntent = new Intent(getApplicationContext(), AlertReminder.class);
             outIntent.putExtra("id", alert.getId());
             outIntent.putExtra("assessmentId", alert.getAssessmentId());
@@ -285,7 +292,7 @@ public class AssessmentEditActivity extends AppCompatActivity {
             );
 
             AlarmManager alertManage = (AlarmManager) getSystemService(ALARM_SERVICE);
-            alertManage.set(AlarmManager.RTC, alert.getDate().getTime(), pendingIntent);
+            alertManage.set(AlarmManager.RTC, alert.getDate().getTime() + 10000, pendingIntent);
             Toast.makeText(getApplicationContext(), "Alert set", Toast.LENGTH_LONG).show();
         } else {
             Toast.makeText(getApplicationContext(), "Assessment goal date is past due", Toast.LENGTH_LONG).show();
@@ -305,6 +312,7 @@ public class AssessmentEditActivity extends AppCompatActivity {
 
             NotificationManager notifyManager = getSystemService(NotificationManager.class);
             notifyManager.createNotificationChannel(notifyChannel);
+            Log.println(Log.INFO, "TAG", "Notification channel set: ");
         }
     }
 

@@ -36,13 +36,15 @@ public class CourseEntity {
     private String email;
     @ColumnInfo(name = "phone")
     private String phone;
+    @ColumnInfo(name = "alertSet")
+    private int alertSet;
 
     @Ignore
     public CourseEntity() {
     }
 
     @Ignore
-    public CourseEntity(int id, int termId, String courseName, Date startDate, Date endDate, String status, String name, String email, String phone) {
+    public CourseEntity(int id, int termId, String courseName, Date startDate, Date endDate, String status, String name, String email, String phone, int alertSet) {
         this.id = id;
         this.termId = termId;
         this.courseName = courseName;
@@ -52,9 +54,10 @@ public class CourseEntity {
         this.name = name;
         this.email = email;
         this.phone = phone;
+        this.alertSet = alertSet;
     }
 
-    public CourseEntity(int termId, String courseName, Date startDate, Date endDate, String status, String name, String email, String phone) {
+    public CourseEntity(int termId, String courseName, Date startDate, Date endDate, String status, String name, String email, String phone, int alertSet) {
         this.termId = termId;
         this.courseName = courseName;
         this.startDate = startDate;
@@ -63,6 +66,15 @@ public class CourseEntity {
         this.name = name;
         this.email = email;
         this.phone = phone;
+        this.alertSet = alertSet;
+    }
+
+    public int getAlertSet() {
+        return alertSet;
+    }
+
+    public void setAlertSet(int alertSet) {
+        this.alertSet = alertSet;
     }
 
     public String getName() {

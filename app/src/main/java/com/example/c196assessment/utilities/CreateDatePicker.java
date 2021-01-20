@@ -32,4 +32,12 @@ public class CreateDatePicker implements DatePickerInt {
         years.add(2025);
         return years;
     }
+
+    public List<Integer> setDay() {
+        List<Integer> days = new ArrayList<>(31);
+        for(int i = 1; i < 32; i++) {
+            days.add(i);
+        }
+        return days;
+    }
 }

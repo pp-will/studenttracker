@@ -24,6 +24,8 @@ import com.example.c196assessment.database.CourseEntity;
 import com.example.c196assessment.utilities.AssessmentData;
 import com.example.c196assessment.utilities.CourseData;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -107,8 +109,11 @@ public class ProgressActivity extends AppCompatActivity {
 
         for(int i = 0; i < courses.size(); i++) {
             Date today = new Date();
+            //
+            LocalDate todayLD = LocalDate.now();
+            LocalDate courseLD = convertToLocalDateTimeViaInstant(courses.get(i).getStartDate());
             Date startDate = courses.get(i).getStartDate();
-            if(startDate.compareTo(today) == 0 || startDate.compareTo(today) == 1) {
+            if(courseLD.compareTo(todayLD) == 0 || courseLD.compareTo(todayLD) > 0) {
                 filteredCourses.add(courses.get(i));
             }
         }
@@ -126,8 +131,10 @@ public class ProgressActivity extends AppCompatActivity {
 
         for(int i = 0; i < assessments.size(); i++) {
             Date today = new Date();
+            LocalDate assessmentTodayLD = LocalDate.now();
+            LocalDate assessmentGoalDateLD = convertToLocalDateTimeViaInstant(assessments.get(i).getGoalDate());
             Date goalDate = assessments.get(i).getGoalDate();
-            if(goalDate.compareTo(today) == 0 || goalDate.compareTo(today) == 1) {
+            if(assessmentGoalDateLD.compareTo(assessmentTodayLD) == 0 || assessmentGoalDateLD.compareTo(assessmentTodayLD) > 0) {
                 filteredAssessments.add(assessments.get(i));
             }
         }
@@ -155,6 +162,12 @@ public class ProgressActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_progress, menu);
         return true;
+    }
+
+    public LocalDate convertToLocalDateTimeViaInstant(Date dateToConvert) {
+        return dateToConvert.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();
     }
 
     @Override

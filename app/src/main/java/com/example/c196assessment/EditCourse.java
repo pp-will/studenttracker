@@ -19,6 +19,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -89,11 +90,22 @@ public class EditCourse extends AppCompatActivity implements AdapterView.OnItemS
     @BindView(R.id.editTextMentorPhone)
     EditText mentorPhone;
 
+    @BindView(R.id.notificationEditSwitch)
+    Switch notificationEditSwitch;
+
+    @BindView(R.id.startDaySpinner)
+    Spinner startDaySpinner;
+
+    @BindView(R.id.endDaySpinner)
+    Spinner endDaySpinner;
+
     List<String> mStartMonths = new ArrayList<>(12);
     List<Integer> mStartYears = new ArrayList<>();
     List<String> mEndMonths = new ArrayList<>(12);
     List<Integer> mEndYears = new ArrayList<>();
     List<String> mStatus = new ArrayList<>();
+    List<Integer> mStartDays = new ArrayList<>();
+    List<Integer> mEndDays = new ArrayList<>();
 
     //Bundle extras = getIntent().getExtras();
 
@@ -110,14 +122,22 @@ public class EditCourse extends AppCompatActivity implements AdapterView.OnItemS
         int startMonth = startMonthSpinner.getSelectedItemPosition();
         int endYear = (int) endYearSpinner.getSelectedItem();
         int endMonth = endMonthSpinner.getSelectedItemPosition();
+        int startDay = (int) startDaySpinner.getSelectedItem();
+        int endDay = (int) endDaySpinner.getSelectedItem();
+        int alertSet = 0;
+
+        if (notificationEditSwitch.isChecked()) {
+            alertSet = 1;
+        }
+
         String course = courseName.getText().toString();
         String status = statusSpinner.getSelectedItem().toString();
         String instructorName = mentorName.getText().toString();
         String instructorEmail = mentorEmail.getText().toString();
         String instructorPhone = mentorPhone.getText().toString();
 
-        Date startDate = dateUtils.createDate(startMonth, startYear);
-        Date endDate = dateUtils.createDate(endMonth, endYear);
+        Date startDate = dateUtils.createDate(startMonth, startDay, startYear);
+        Date endDate = dateUtils.createDate(endMonth, endDay, endYear);
 
         HashMap<String, String> checkValidation = new HashMap<>();
         HashMap<String, String> validationResult = new HashMap<>();
@@ -148,14 +168,16 @@ public class EditCourse extends AppCompatActivity implements AdapterView.OnItemS
                 Log.println(Log.INFO, "TAG", "update courseId = " + courseId);
                 //courseViewModel.updateCourse(courseId, termId, course, startDate, endDate, status, instructorName, instructorEmail, instructorPhone);
                 //update course, return id
-                CourseEntity courseEntity = new CourseEntity(courseId, termId, course, startDate, endDate, status, instructorName, instructorEmail, instructorPhone);
+                CourseEntity courseEntity = new CourseEntity(courseId, termId, course, startDate, endDate, status, instructorName, instructorEmail, instructorPhone, alertSet);
                 mDb.courseDao().newUpdateCourse(courseEntity);
                 //int newCourseId = (int) returnedCourseId;
                 CourseEntity newCourseEntity = mDb.courseDao().getCourseDetails(courseId);
                 String message = newCourseEntity.getCourseName();
                 startDate = newCourseEntity.getStartDate();
                 endDate = newCourseEntity.getEndDate();
-                mDb.courseAlertDao().updateAlert(courseId, message, startDate, endDate);
+                if (newCourseEntity.getAlertSet() == 1) {
+                    mDb.courseAlertDao().updateAlert(courseId, message, startDate, endDate);
+                }
                 //end alert
             } catch (NullPointerException e) {
                 e.printStackTrace();
@@ -193,6 +215,12 @@ public class EditCourse extends AppCompatActivity implements AdapterView.OnItemS
         startYearSpinner.setOnItemSelectedListener(this);
         mStartYears = createDatePicker.setYear();
 
+        startDaySpinner.setOnItemSelectedListener(this);
+        mStartDays = createDatePicker.setDay();
+
+        endDaySpinner.setOnItemSelectedListener(this);
+        mEndDays = createDatePicker.setDay();
+
         endMonthSpinner.setOnItemSelectedListener(this);
         mEndMonths = createDatePicker.setMonth();
 
@@ -211,6 +239,14 @@ public class EditCourse extends AppCompatActivity implements AdapterView.OnItemS
         ArrayAdapter<Integer> startYearAdapter = new ArrayAdapter<Integer>(this, android.R.layout.simple_spinner_item, mStartYears);
         startYearAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         startYearSpinner.setAdapter(startYearAdapter);
+
+        ArrayAdapter<Integer> startDayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, mStartDays);
+        startDayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        startDaySpinner.setAdapter(startDayAdapter);
+
+        ArrayAdapter<Integer> endDayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, mEndDays);
+        endDayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        endDaySpinner.setAdapter(endDayAdapter);
 
         ArrayAdapter<String> endMonthAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, mEndMonths);
         endMonthAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -260,13 +296,20 @@ public class EditCourse extends AppCompatActivity implements AdapterView.OnItemS
                 calendarStart.setTime(startDate1);
                 calendarEnd.setTime(endDate1);
 
+                if (courseEntity.getAlertSet() == 1) {
+                    notificationEditSwitch.setChecked(true);
+                }
+
                 Log.println(Log.INFO, "TAG", "update INIT termId = " + courseEntity.getTermId());
                 extras.putInt(TERM_ID_KEY, courseEntity.getTermId());
 
                 int startMonth = calendarStart.get(Calendar.MONTH);
+                int startDay = calendarStart.get(Calendar.DAY_OF_MONTH);
                 int startYear = calendarStart.get(Calendar.YEAR);
                 int endMonth = calendarEnd.get(Calendar.MONTH);
                 int endYear = calendarEnd.get(Calendar.YEAR);
+                int endDay = calendarEnd.get(Calendar.DAY_OF_MONTH);
+                Log.println(Log.INFO, "TAG", "END DAY FROM EDIT ::: " + endDay);
 
                 ArrayAdapter<String> startMonthAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, mStartMonths);
                 startMonthAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -285,10 +328,12 @@ public class EditCourse extends AppCompatActivity implements AdapterView.OnItemS
                 endYearSpinner.setAdapter(endYearAdapter);
 
                 startMonthSpinner.setSelection(startMonth);
+                startDaySpinner.setSelection(startDay - 1);
                 int startYearPosition = startYearAdapter.getPosition(startYear);
                 startYearSpinner.setSelection(startYearPosition);
 
                 endMonthSpinner.setSelection(endMonth);
+                endDaySpinner.setSelection(endDay - 1);
                 int endYearPosition = endYearAdapter.getPosition(endYear);
                 endYearSpinner.setSelection(endYearPosition);
 

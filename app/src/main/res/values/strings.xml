@@ -151,4 +151,6 @@
     <string name="clear_database">Clear database</string>
     <string name="upcoming_courses">Upcoming Courses</string>
     <string name="upcoming_assessments">Upcoming Assessments</string>
+    <string name="reports">Reports</string>
+    <string name="generate_class_report">Generate Class Report</string>
 </resources>

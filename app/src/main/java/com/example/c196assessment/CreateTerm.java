@@ -66,8 +66,8 @@ public class CreateTerm extends AppCompatActivity implements AdapterView.OnItemS
         Log.println(Log.INFO, "TAG", "term is " + term);
         //Log.println(Log.INFO, "TAG", "TEST POS is " + intTest);*/
 
-        Date startDate = dateUtils.createDate(startMonth, startYear);
-        Date endDate = dateUtils.createDate(endMonth, endYear);
+        Date startDate = dateUtils.createDate(startMonth, 1, startYear);
+        Date endDate = dateUtils.createDate(endMonth, 30, endYear);
 
         try {
             mTermViewModel.saveTerm(term, startDate, endDate);
