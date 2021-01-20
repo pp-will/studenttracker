@@ -18,8 +18,33 @@ public class SampleTermData {
 
     public static List<TermEntity> getTerms() {
         List<TermEntity> terms = new ArrayList<>();
-        terms.add(new TermEntity(1, "Spring 2021", getDate(1), getDate(6)));
-        terms.add(new TermEntity(2, "Winter 2021", getDate(7), getDate(13)));
+        Calendar calendar = Calendar.getInstance();
+        calendar.clear();
+        calendar.set(Calendar.MONTH, Calendar.JANUARY);
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        calendar.set(Calendar.YEAR, 2021);
+        Date date = calendar.getTime();
+
+        calendar.clear();
+        calendar.set(Calendar.MONTH, Calendar.JUNE);
+        calendar.set(Calendar.DAY_OF_MONTH, 30);
+        calendar.set(Calendar.YEAR, 2021);
+        Date term1End = calendar.getTime();
+
+        calendar.clear();
+        calendar.set(Calendar.MONTH, Calendar.JULY);
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        calendar.set(Calendar.YEAR, 2021);
+        Date term2Start = calendar.getTime();
+
+        calendar.clear();
+        calendar.set(Calendar.MONTH, Calendar.DECEMBER);
+        calendar.set(Calendar.DAY_OF_MONTH, 31);
+        calendar.set(Calendar.YEAR, 2021);
+        Date term2End = calendar.getTime();
+
+        terms.add(new TermEntity("Spring 2021", date, term1End));
+        terms.add(new TermEntity("Winter 2021", term2Start, term2End));
         return terms;
     }
 }

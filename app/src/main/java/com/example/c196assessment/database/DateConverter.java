@@ -2,6 +2,8 @@ package com.example.c196assessment.database;
 
 import androidx.room.TypeConverter;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class DateConverter {
@@ -16,3 +18,4 @@ public class DateConverter {
         return date == null ? null : date.getTime();
     }
 }
+

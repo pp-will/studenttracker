@@ -48,6 +48,7 @@ dependencies {
     implementation "androidx.concurrent:concurrent-futures:1.1.0"
 
     implementation "androidx.lifecycle:lifecycle-viewmodel:$lifecycle_version"
+    //implementation "android.arch.lifecycle:extensions:$lifecycle_version" // make sure to have this too.
 
     def room_version = "2.2.5"
 

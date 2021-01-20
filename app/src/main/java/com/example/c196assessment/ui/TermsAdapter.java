@@ -1,6 +1,7 @@
 package com.example.c196assessment.ui;
 
 import android.content.Context;
+import android.content.Intent;
 import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,13 +12,19 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.c196assessment.R;
+import com.example.c196assessment.TermCourses;
+import com.example.c196assessment.database.DateConverter;
 import com.example.c196assessment.database.TermEntity;
+import com.example.c196assessment.utilities.DateUtils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static com.example.c196assessment.utilities.Constants.TERM_ID_KEY;
 
 public class TermsAdapter extends RecyclerView.Adapter<TermsAdapter.ViewHolder> {
 
@@ -41,7 +48,20 @@ public class TermsAdapter extends RecyclerView.Adapter<TermsAdapter.ViewHolder> 
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         final TermEntity term = mTerms.get(position);
         holder.termTitle.setText(term.getTermTitle());
-        holder.termDates.setText(term.getStartDate() + " - " + term.getEndDate());
+        DateUtils dateUtils = new DateUtils();
+        String startDate = dateUtils.formattedDate(term.getStartDate());
+        String endDate = dateUtils.formattedDate(term.getEndDate());
+        holder.termDates.setText(startDate + " - " + endDate);
+
+        holder.mFab.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, TermCourses.class);
+                intent.putExtra(TERM_ID_KEY, term.getId());
+                mContext.startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -54,6 +74,7 @@ public class TermsAdapter extends RecyclerView.Adapter<TermsAdapter.ViewHolder> 
         TextView termTitle;
         @BindView(R.id.term_dates)
         TextView termDates;
+        @BindView(R.id.viewFab)
         FloatingActionButton mFab;
 
         public ViewHolder(@NonNull View termView) {
