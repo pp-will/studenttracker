@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">C196Assessment</string>
+    <string name="app_name">WGU Student Progress Tracker</string>
     <string name="wgu">WGU</string>
     <string name="student_progress_tracker">Student Progress Tracker</string>
     <string name="enter">Enter</string>
@@ -153,4 +153,5 @@
     <string name="upcoming_assessments">Upcoming Assessments</string>
     <string name="reports">Reports</string>
     <string name="generate_class_report">Generate Class Report</string>
+    <string name="create_term">Create Term</string>
 </resources>

@@ -93,7 +93,7 @@ public class CreateTerm extends AppCompatActivity implements AdapterView.OnItemS
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_term);
         ButterKnife.bind(this);
-
+        setTitle(getString(R.string.create_term));
         //Month spinner
         startMonthSpinner = findViewById(R.id.startMonthSpinner);
         startMonthSpinner.setOnItemSelectedListener(this);
