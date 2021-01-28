@@ -357,7 +357,7 @@ public class EditCourse extends AppCompatActivity implements AdapterView.OnItemS
         }));
 
         if (extras != null) {
-            setTitle("View Class");
+            setTitle("View Course");
             courseViewModel.loadCourseData(courseId);
         }
 

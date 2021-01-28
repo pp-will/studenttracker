@@ -64,6 +64,7 @@ public class ReportActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
         }
         setContentView(R.layout.activity_report);
+        setTitle(getString(R.string.reports));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mDb = AppDatabase.getInstance(getApplicationContext());
         reportTypeSpinner = findViewById(R.id.reportTypeSpinner);
@@ -72,7 +73,6 @@ public class ReportActivity extends AppCompatActivity {
         createReportType = new CreateReportType();
         searchOptions = createReportType.setReportType();
         searchInput = findViewById(R.id.queryParam);
-
         ArrayAdapter<String> searchOptionAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, searchOptions);
         searchOptionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         reportTypeSpinner.setAdapter(searchOptionAdapter);

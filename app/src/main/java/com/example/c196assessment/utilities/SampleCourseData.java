@@ -12,6 +12,8 @@ import java.util.List;
 
 public class SampleCourseData {
 
+    public SampleCourseData() {}
+
     private static Date getDate(int diff) {
         GregorianCalendar cal = new GregorianCalendar();
         cal.add(Calendar.MONTH, diff);
